@@ -2,6 +2,157 @@
 {% block title %}Admin Dashboard | PlaceMe{% endblock %}
 {% block content %}
 
-<h1>Welcome Admin!</h1>
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white text-center p-3">
+                <h5>Total Students</h5>
+                <h2>{{ total_students }}</h2>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white text-center p-3">
+                <h5>Total Companies</h5>
+                <h2>{{ total_companies }}</h2>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-white text-center p-3">
+                <h5>Total Drives</h5>
+                <h2>{{ total_drives }}</h2>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-danger text-white text-center p-3">
+                <h5>Total Applications</h5>
+                <h2>{{ total_applications }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <h4 class="mb-3">Pending Company approvals</h4>
+    {% if pending_companies %}
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Website</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for company in pending_companies %}
+            <tr>
+                <td>{{ company.name }}</td>
+                <td>{{ company.email }}</td>
+                <td>{{ company.website }}</td>
+                <td>
+                    <form action="{{ url_for('approve_company', company_id = company.id) }}" method="POST">
+                        <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                    </form>
+                    <form action="{{ url_for('reject_company', company_id = company.id) }}" method="POST">
+                        <button type="submit" class="btn btn-danger btn-sm">Reject</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No pending companies!</p>
+    {% endif %}
+
+    <form action="{{ url_for('admin_dashboard') }}" method="GET">
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" name="search_student" placeholder="Search student by name or ID">
+            <button class="btn btn-primary" type="submit">Search</button>
+        </div>
+    </form>
+
+    <h4 class="mb-3 mt-4">All Students</h4>
+    {% if all_students %}
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Department</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for student in all_students %}
+            <tr>
+                <td>{{ student.id }}</td>
+                <td>{{ student.name }}</td>
+                <td>{{ student.email }}</td>
+                <td>{{ student.department }}</td>
+                <td>{{ "Active" if student.is_active else "Blacklisted" }}</td>
+                <td>
+                    <form action="{{ url_for('blacklist_student', student_id = student.id) }}" method="POST">
+                        <button type="submit" class="btn btn-warning btn-sm">
+                            {{ "Unblacklist" if not student.is_active else "Blacklist" }}
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No students registered!</p>
+    {% endif %}
+
+
+    <form action="{{ url_for('admin_dashboard') }}" method="GET">
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" name="search_company" placeholder="Search company by name or ID">
+            <button class="btn btn-primary" type="submit">Search</button>
+        </div>
+    </form>
+
+    <h4 class="mb-3 mt-4">All Companies</h4>
+    {% if all_companies %}
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Website</th>
+                <th>Department</th>
+                <th>Approved</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for company in all_companies %}
+            <tr>
+                <td>{{ company.id }}</td>
+                <td>{{ company.name }}</td>
+                <td>{{ company.email }}</td>
+                <td>{{ company.website }}</td>
+                <td>{{ company.department }}</td>
+                <td>{{ "Yes" if company.is_approved else "No" }}</td>
+                <td>{{ "Active" if company.is_active else "Blacklisted" }}</td>
+                <td>
+                    <form action="{{ url_for('blacklist_company', company_id = company.id) }}" method="POST">
+                        <button type="submit" class="btn btn-warning btn-sm">
+                            {{ "Unblacklist" if not company.is_active else "Blacklist" }}
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No companies registered!</p>
+    {% endif %}
+</div>
 
 {% endblock %}

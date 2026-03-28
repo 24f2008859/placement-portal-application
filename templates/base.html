@@ -7,6 +7,16 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
 </head>
 <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">PlaceMe</a>
+            <div class="ms-auto">
+                {% if request.endpoint not in ['home', 'register'] %}
+                <a class="btn btn-outline-light" href="{{ url_for('logout')}}">Logout</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
     {% with messages = get_flashed_messages(with_categories = true) %}
         {% if messages %}
             {% for category, message in messages %}

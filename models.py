@@ -15,6 +15,8 @@ class Company(db.Model):
     password = db.Column(db.String(200), nullable = False)
     website = db.Column(db.String(200), nullable = True)
     is_approved = db.Column(db.Boolean, default = False)
+    is_active = db.Column(db.Boolean, default=True)
+    department = db.Column(db.String(100), nullable = True)
 
 class Student(db.Model):
     id = db.Column(db.Integer, primary_key = True)
@@ -22,6 +24,7 @@ class Student(db.Model):
     email = db.Column(db.String(100), nullable = False, unique = True)
     password = db.Column(db.String(200), nullable = False)
     department = db.Column(db.String(100), nullable = False)
+    is_active = db.Column(db.Boolean, default=True)
 
 class Job(db.Model):
     id = db.Column(db.Integer, primary_key = True)
@@ -29,6 +32,7 @@ class Job(db.Model):
     description = db.Column(db.Text, nullable = False)
     company_id = db.Column(db.Integer, db.ForeignKey('company.id'))
     company = db.relationship('Company', backref='jobs')
+    status = db.Column(db.String(20), default = "pending")
 
 class Application(db.Model):
     id = db.Column(db.Integer, primary_key = True)
