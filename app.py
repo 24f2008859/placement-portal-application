@@ -80,6 +80,8 @@ def admin_dashboard():
     total_applications = Application.query.count()
     pending_companies = Company.query.filter_by(is_approved=False, is_active=True).all()
     pending_drives = Job.query.filter_by(status = 'pending').all()
+    all_drives = Job.query.all()
+    all_applications = Application.query.all()
     
     search_student = request.args.get("search_student", "")
     search_company = request.args.get("search_company", "")
@@ -109,7 +111,9 @@ def admin_dashboard():
             pending_companies = pending_companies,
             pending_drives = pending_drives,
             all_students = all_students,
-            all_companies = all_companies)
+            all_companies = all_companies,
+            all_drives = all_drives,
+            all_applications = all_applications)
 
 @app.route("/student_dashboard")
 def student_dashboard():

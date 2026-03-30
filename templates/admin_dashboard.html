@@ -190,6 +190,58 @@
     {% else %}
     <p>No companies registered!</p>
     {% endif %}
+
+    <h4 class="mb-4">All Drives</h4>
+    {% if all_drives %}
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Job Title</th>
+                <th>Company</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for drive in all_drives %}
+            <tr>
+                <td>{{ drive.id }}</td>
+                <td>{{ drive.title }}</td>
+                <td>{{ drive.company.name }}</td>
+                <td>{{ drive.status | capitalize }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No ongoing drives!</p>
+    {% endif %}
+
+    <h4 class="mb-4">All Applications</h4>
+    {% if all_applications %}
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Student Name</th>
+                <th>Job Title</th>
+                <th>Company</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for app in all_applications %}
+            <tr>
+                <td>{{ app.student.name }}</td>
+                <td>{{ app.job.title }}</td>
+                <td>{{ app.job.company.name }}</td>
+                <td>{{ app.status | capitalize }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No applications</p>
+    {% endif %}
 </div>
 
 {% endblock %}
