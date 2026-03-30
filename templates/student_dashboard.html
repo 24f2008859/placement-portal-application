@@ -2,6 +2,73 @@
 {% block title %}Student Dashboard | PlaceMe{% endblock %}
 {% block content %}
 
-<h1>Welcome Student!</h1>
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card p-4">
+                <h4 class="text-center mb-3">Student Profile</h4>
+                <h5><strong>Name:</strong> {{ student.name }}</h5>
+                <h5><strong>Email:</strong> {{ student.email }}</h5>
+                <h5><strong>Department:</strong> {{ student.department }}</h5>
+            </div>
+        </div>
+    </div>
+    <h4 class="mb-3">Ongoing Drives</h4>
+    {% if approved_drives %}
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Drive Id</th>
+                <th>Company Name</th>
+                <th>Job Title</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for drive in approved_drives %}
+            <tr>
+                <td>{{ drive.id }}</td>
+                <td>{{ drive.company.name }}</td>
+                <td>{{ drive.title }}</td>
+                <td>
+                    {% if drive.id in applied_job_ids %}
+                        <span class="badge bg-success">Applied</span>
+                    {% else %}
+                        <form action="{{ url_for('apply', drive_id = drive.id)}}" method="POST">
+                            <button type="submit" class="btn btn-primary btn-sm">Apply</button>
+                        </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No applications</p>
+    {% endif %}
+    <h4 class="mb-3">My applications</h4>
+    {% if my_applications %}
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Job Title</th>
+                <th>Company</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for app in my_applications %}
+            <tr>
+                <td>{{ app.job.title }}</td>
+                <td>{{ app.job.company.name }}</td>
+                <td>{{ app.status | capitalize }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>Not applied yet!</p>
+    {% endif %}
+</div>
 
 {% endblock %}

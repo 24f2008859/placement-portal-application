@@ -79,6 +79,7 @@ def admin_dashboard():
     total_drives = Job.query.count()
     total_applications = Application.query.count()
     pending_companies = Company.query.filter_by(is_approved=False, is_active=True).all()
+    pending_drives = Job.query.filter_by(status = 'pending').all()
     
     search_student = request.args.get("search_student", "")
     search_company = request.args.get("search_company", "")
@@ -86,6 +87,7 @@ def admin_dashboard():
     if search_student:
         all_students = Student.query.filter(
             Student.name.contains(search_student) |
+            Student.email.contains(search_student) |
             Student.id == (int(search_student) if search_student.isdigit() else -1)
         ).all()
     else:
@@ -94,6 +96,7 @@ def admin_dashboard():
     if search_company:
         all_companies = Company.query.filter(
             Company.name.contains(search_company) |
+            Company.department.contains(search_company) |
             Company.id == (int(search_company) if search_company.isdigit() else -1)
         ).all()
     else:
@@ -104,6 +107,7 @@ def admin_dashboard():
             total_drives = total_drives,
             total_applications = total_applications,
             pending_companies = pending_companies,
+            pending_drives = pending_drives,
             all_students = all_students,
             all_companies = all_companies)
 
@@ -112,14 +116,21 @@ def student_dashboard():
     if session.get('role') != 'student':
         flash("Unauthorized access!", "danger")
         return redirect(url_for('home'))
-    return render_template("student_dashboard.html")
+    student = Student.query.get(session['student_id'])
+    approved_drives = Job.query.filter_by(status='approved').all()
+    my_applications = Application.query.filter_by(student_id = student.id).all()
+    applied_job_ids = [app.job_id for app in my_applications]
+
+    return render_template("student_dashboard.html", student=student, approved_drives = approved_drives, my_applications = my_applications, applied_job_ids = applied_job_ids)
 
 @app.route("/company_dashboard" )
 def company_dashboard():
     if session.get('role') != 'company':
         flash("Unauthorized access!", "danger")
         return redirect(url_for('home'))
-    return render_template("company_dashboard.html")
+    company = Company.query.get(session['company_id'])
+    drives = Job.query.filter_by(company_id = company.id).all()
+    return render_template("company_dashboard.html", company = company, drives=drives)
 
 @app.route("/approve_company/<int:company_id>", methods=["POST"])
 def approve_company(company_id):
@@ -153,6 +164,77 @@ def blacklist_company(company_id):
     db.session.commit()
     flash("Company status updated!", "success")
     return redirect(url_for('admin_dashboard'))
+
+@app.route("/create_drive", methods=["POST"])
+def create_drive():
+    if session.get('role') != 'company':
+        return redirect(url_for('home'))
+    title = request.form.get("title")
+    description = request.form.get("description")
+    company_id = session['company_id']
+    new_drive = Job(title = title, description=description, company_id=company_id)
+    db.session.add(new_drive)
+    db.session.commit()
+    flash("Drive created! Waiting for admin approval.", "success")
+    return redirect(url_for('company_dashboard'))
+
+
+@app.route("/view_applications/<int:drive_id>")
+def view_applications(drive_id):
+    if session.get('role') != 'company':
+        flash("Unauthorized access!", "danger")
+        return redirect(url_for('home'))
+    drive = Job.query.get(drive_id)
+    applications = Application.query.filter_by(job_id = drive_id).all()
+    return render_template("view_applications.html", drive=drive, applications=applications)
+
+
+@app.route("/update_application/<int:application_id>", methods= ["POST"])
+def update_application(application_id):
+    if session.get('role') != 'company':
+        return redirect(url_for('home'))
+    status = request.form.get("status")
+    application = Application.query.get(application_id)
+    application.status = status
+    db.session.commit()
+    flash("Application status updated!", "success")
+    return redirect(url_for('view_applications', drive_id = application.job_id))
+
+@app.route("/apply/<int:drive_id>", methods = ["POST"])
+def apply(drive_id):
+    if session.get('role') != 'student':
+        return redirect(url_for('home'))
+    student_id = session['student_id']
+    existing = Application.query.filter_by(student_id = student_id, job_id = drive_id).first()
+    if existing:
+        flash("already applied!", "warning")
+    else:
+        new_application = Application(student_id = student_id, job_id = drive_id)
+        db.session.add(new_application)
+        db.session.commit()
+        flash("applied successfully!", "success")
+    return redirect(url_for('student_dashboard'))
+
+@app.route("/approve_drive/<int:drive_id>", methods = ["POST"])
+def approve_drive(drive_id):
+    if session.get('role') != 'admin':
+        return redirect(url_for('home'))
+    drive = Job.query.get(drive_id)
+    drive.status = 'approved'
+    db.session.commit()
+    flash("Drive approved!", "success")
+    return redirect(url_for('admin_dashboard'))
+
+@app.route("/reject_drive/<int:drive_id>", methods = ["POST"])
+def reject_drive(drive_id):
+    if session.get('role') != 'admin':
+        return redirect(url_for('home'))
+    drive = Job.query.get(drive_id)
+    drive.status = 'approved'
+    db.session.commit()
+    flash("Drive rejected!", "danger")
+    return redirect(url_for('admin_dashboard'))
+
 
 with app.app_context():
     db.create_all()

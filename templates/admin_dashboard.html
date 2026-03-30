@@ -70,6 +70,43 @@
         </div>
     </form>
 
+    <h4 class="mb-3 mt-4">Pending Drive Approvals</h4>
+    {% if pending_drives %}
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Drive ID</th>
+                <th>Job Title</th>
+                <th>Company</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for drive in pending_drives %}
+            <tr>
+                <td>{{ drive.id }}</td>
+                <td>{{drive.title }}</td>
+                <td>{{drive.company.name }}</td>
+                <td>
+                    <form action="{{ url_for('approve_drive', drive_id = drive.id)}}" method="POST">
+                        <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                    </form>
+                    <form action="{{ url_for('reject_drive', drive_id = drive.id)}}" method="POST">
+                        <button type="submit" class="btn btn-danger btn-sm">Reject</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No pending drives!</p>
+    {% endif %}
+
+
+
+
+
     <h4 class="mb-3 mt-4">All Students</h4>
     {% if all_students %}
     <table class="table table-bordered">
