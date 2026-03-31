@@ -25,14 +25,19 @@ class Student(db.Model):
     password = db.Column(db.String(200), nullable = False)
     department = db.Column(db.String(100), nullable = False)
     is_active = db.Column(db.Boolean, default=True)
+    resume = db.Column(db.String(200), nullable = True)
 
 class Job(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     title = db.Column(db.String(100), nullable = False)
     description = db.Column(db.Text, nullable = False)
     company_id = db.Column(db.Integer, db.ForeignKey('company.id'))
-    company = db.relationship('Company', backref='jobs')
     status = db.Column(db.String(20), default = "pending")
+    skills = db.Column(db.String(200), nullable = True)
+    experience = db.Column(db.String(100), nullable = True)
+    salary = db.Column(db.String(200), nullable = True)
+    deadline = db.Column(db.String(200), nullable = True)
+    company = db.relationship('Company', backref='jobs')
 
 class Application(db.Model):
     id = db.Column(db.Integer, primary_key = True)

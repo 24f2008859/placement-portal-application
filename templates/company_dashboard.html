@@ -28,6 +28,22 @@
                         <label for="description">Job Description</label>
                         <textarea class="form-control" id="description" name="description" rows="4" placeholder="Enter job description"></textarea>
                     </div>
+                    <div class="mb-3">
+                        <label for="skills">Required skills</label>
+                        <input type="text" class="form-control" id="skills" name="skills" placeholder="e.g. Python, SQL, Flask">
+                    </div>
+                    <div class="mb-3">
+                        <label for="experience">Experience Required</label>
+                        <input type="text" class="form-control" id="experience" name="experience" placeholder="e.g. 0-2 years">
+                    </div>
+                    <div class="mb-3">
+                        <label for="salary">Salary Range</label>
+                        <input type="text" class="form-control" id="salary" name="salary" placeholder="e.g. 5-8 LPA">
+                    </div>
+                    <div class="mb-3">
+                        <label for="deadline">Application Deadline</label>
+                        <input type="date" class="form-control" id="deadline" name="deadline">
+                    </div>
                     <button type="submit" class="btn btn-primary w-100">
                         Create Drive
                     </button>
@@ -53,6 +69,11 @@
                 <td>{{ drive.status | capitalize }}</td>
                 <td>
                     <a href="{{ url_for('view_applications', drive_id = drive.id) }}" class="btn btn-primary btn-sm">View Applications</a>
+                    <form action="{{ url_for('toggle_drive_status', drive_id = drive.id)}}" method="POST">
+                        <button type="submit" class="btn btn-warning btn-sm">
+                            {{ "Close Drive" if drive.status == 'approved' else "Reopen Drive"}}
+                        </button>
+                    </form>
                 </td>
             </tr>
             {% endfor %}

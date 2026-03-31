@@ -12,6 +12,7 @@
             <th>Email</th>
             <th>Status</th>
             <th>Actions</th>
+            <th>Resume</th>
         </tr>
     </thead>
     <tbody>
@@ -31,6 +32,13 @@
                     </select>
                     <button type="submit" class="btn btn-primary btn-sm mt-1">Update</button>
                 </form>
+            </td>
+            <td>
+                {% if application.student.resume %}
+                    <a href="{{ url_for('static', filename='resumes/'+application.student.resume) }}" target="_blank" class="btn btn-info btn-sm">View Resume</a>
+                {% else %}
+                    <span class="text-muted">No resume</span>
+                {% endif %}
             </td>
         </tr>
         {% endfor %}

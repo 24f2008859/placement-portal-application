@@ -1,9 +1,12 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_sqlalchemy import SQLAlchemy 
 from models import db, Admin, Company, Student, Job, Application, Placement
+import os
 
 app = Flask(__name__)
 app.secret_key = "placeme_secret"
+app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(__file__), 'static/resumes')
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///placeme.db"
 db.init_app(app)
 app.app_context().push()
@@ -175,8 +178,12 @@ def create_drive():
         return redirect(url_for('home'))
     title = request.form.get("title")
     description = request.form.get("description")
+    skills = request.form.get("skills")
+    experience = request.form.get("experience")
+    salary = request.form.get("salary")
+    deadline = request.form.get("deadline")
     company_id = session['company_id']
-    new_drive = Job(title = title, description=description, company_id=company_id)
+    new_drive = Job(title = title, description=description, company_id=company_id, skills = skills, experience = experience, salary = salary, deadline = deadline)
     db.session.add(new_drive)
     db.session.commit()
     flash("Drive created! Waiting for admin approval.", "success")
@@ -238,6 +245,33 @@ def reject_drive(drive_id):
     db.session.commit()
     flash("Drive rejected!", "danger")
     return redirect(url_for('admin_dashboard'))
+
+@app.route("/toggle_drive_status/<int:drive_id>", methods = ["POST"])
+def toggle_drive_status(drive_id):
+    if session.get('role') != 'company':
+        return redirect(url_for('home'))
+    drive = Job.query.get(drive_id)
+    if drive.status == 'approved':
+        drive.status = 'closed'
+    else:
+        drive.status = 'approved'
+    db.session.commit()
+    flash("Drive status updated!", "success")
+    return redirect(url_for('company_dashboard'))
+
+@app.route("/upload_resume", methods=["POST"])
+def upload_resume():
+    if session.get('role') != 'student':
+        return redirect(url_for('home'))
+    student = Student.query.get((session['student_id']))
+    file = request.files.get("resume")
+    if file:
+        filename = f"student_{student.id}_{file.filename.replace(' ','_')}"
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        student.resume = filename
+        db.session.commit()
+        flash("Resume upload successfully", "success")
+    return redirect(url_for('student_dashboard'))
 
 
 with app.app_context():
