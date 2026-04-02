@@ -1,29 +1,27 @@
 {% extends "base.html" %}
-{% block title %}Register | PlaceMe{% endblock %} 
+{% block title %}Recruiter Register | PlaceMe{% endblock %} 
 {% block content %}
-    <form action="{{ url_for('register') }}" method = "POST">
+    <form action="{{ url_for('recruiter_register') }}" method = "POST">
+        <input type="hidden" name="role" value="recruiter">
         <div class="d-flex justify-content-center align-items-center vh-100">
             <div class="card p-4" style="width: 500px;">
                     <h3 class="text-center mb-4">Create an account</h3>
+                    
                     <div class="mb-3">
-                        <label for="role">Register as</label>
-                        <select class="form-select" id="role" name="role">
-                            <option value="">-- Select Role --</option>
-                            <option value="student">Student</option>
-                            <option value="recruiter">Recruiter</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="full-name">Full Name</label>
+                        <label for="full-name">Recruiter Name</label>
                         <input type="text" class="form-control" id="full-name" name = "name" placeholder="Enter your name">
                     </div>
                     <div class="mb-3">
-                        <label for="email">Email Address</label>
+                        <label for="email">Official Email Address</label>
                         <input type="email" class="form-control" id="email" name = "email" placeholder="Enter your email">
                     </div>
                     <div class="mb-3">
-                        <label for="department">Department / Industry</label>
-                        <input type="text" class="form-control" id="department" name = "department" placeholder="Enter your department">
+                        <label for="industry">Industry</label>
+                        <input type="text" class="form-control" id="industry" name = "industry" placeholder="Enter your industry">
+                    </div>
+                    <div class="mb-3">
+                        <label for="website">Recruiter Website</label>
+                        <input type="text" class="form-control" id="website" name="website" placeholder="e.g. www.recruiter.com">
                     </div>
                     <div class="mb-3">
                         <label for="password">Password</label>
@@ -33,12 +31,9 @@
                         <label for="confirm-password">Confirm password</label>
                         <input type="password" class="form-control" id="confirm-password" name = "confirm-password" placeholder="Retype your password">
                     </div>
-                     <div class="mb-3">
-                        <label for="website">Website <small class="text-muted">(For companies only)</small></label>
-                        <input type="text" class="form-control" id="website" name = "website" placeholder="Enter website">
-                    </div>
+                    
                     <button type="submit" class="btn btn-primary w-100">Register</button>
-                    <p class="text-center mt-3">Already have an account? <a href="{{url_for ('home') }}">Login here</a></p>
+                    <p class="text-center mt-3">Already have an account? <a href="{{url_for ('login') }}">Login here</a></p>
             </div>
         </div>
     </form>

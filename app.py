@@ -13,6 +13,11 @@ app.app_context().push()
 
 @app.route("/", methods = ["GET", "POST"])
 def home():
+    return render_template("home.html")
+
+
+@app.route("/login", methods=["GET","POST"])
+def login():
     if request.method == "POST":
         email = request.form.get("email")
         password = request.form.get("password")
@@ -36,41 +41,57 @@ def home():
         else:
             flash("Invalid credentials")
     return render_template("login.html")
-
-
 @app.route("/logout")
 def logout():
     session.clear()
     flash("Logged out successfully!", "success")
     return redirect(url_for('home'))
 
-@app.route("/register", methods = ["GET", "POST"])
-def register():
+@app.route("/student_register", methods=["GET","POST"])
+def student_register():
     if request.method == "POST":
-        role = request.form.get("role")
+        name = request.form.get("name")
         email = request.form.get("email")
         password = request.form.get("password")
-        name = request.form.get("name")
         department = request.form.get("department")
-        existing_user1 = Student.query.filter_by(email=email).first()
-        existing_user2 = Company.query.filter_by(email=email).first()
-        if existing_user1 or existing_user2:
-            flash("Email already registered", "danger" )
+        skills = request.form.get("skills")
+        existing = Student.query.filter_by(email=email).first()
+        if existing:
+            flash("Email already registered!", "danger")
         else:
-            if role == 'student':
-                new_user = Student(name = name, email = email, password = password, department = department)
-                db.session.add(new_user)
-                db.session.commit()
-                flash("Registration successful", "success")
-                return redirect(url_for('home'))
-            elif role == 'recruiter':
-                website = request.form.get("website")
-                new_user = Company(name = name, email = email, password = password, website= website, industry= department)
-                db.session.add(new_user)
-                db.session.commit()
-                flash("Registration submitted! wait for Admin approval.", "success")
-                return redirect(url_for('home'))
-    return render_template("register.html")
+            new_student = Student(name=name, email=email, password=password, department=department, skills=skills)
+            file = request.files.get("resume")
+            if file and file.filename != "":
+                filename = f"student_{email}_{file.filename.replace(' ', '_')}"
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                new_student.resume = filename
+            db.session.add(new_student)
+            db.session.commit()
+            flash("Registration successful!", "success")
+            return redirect(url_for('home'))
+    return render_template("student_register.html")
+
+
+@app.route("/recruiter_register", methods=["GET","POST"])
+def recruiter_register():
+    if request.method == "POST":
+        name = request.form.get("name")
+        email = request.form.get("email")
+        password = request.form.get("password")
+        industry = request.form.get("industry")
+        website = request.form.get("website")
+        existing = Company.query.filter_by(email=email).first()
+        if existing:
+            flash("Email already registered!", "danger")
+        else:
+            new_recruiter = Company(name=name, email=email, password=password, industry=industry, website=website)
+            db.session.add(new_recruiter)
+            db.session.commit()
+            flash("Registration submitted! Wait for Admin approval.", "success")
+            return redirect(url_for('home'))
+    return render_template("recruiter_register.html")
+
+
 
 @app.route("/admin_dashboard")
 def admin_dashboard():
@@ -101,7 +122,7 @@ def admin_dashboard():
     if search_company:
         all_companies = Company.query.filter(
             Company.name.contains(search_company) |
-            Company.department.contains(search_company) |
+            Company.industry.contains(search_company) |
             Company.id == (int(search_company) if search_company.isdigit() else -1)
         ).all()
     else:
@@ -124,11 +145,15 @@ def student_dashboard():
         flash("Unauthorized access!", "danger")
         return redirect(url_for('home'))
     student = Student.query.get(session['student_id'])
-    approved_drives = Job.query.filter_by(status='approved').all()
     my_applications = Application.query.filter_by(student_id = student.id).all()
     applied_job_ids = [app.job_id for app in my_applications]
-
-    return render_template("student_dashboard.html", student=student, approved_drives = approved_drives, my_applications = my_applications, applied_job_ids = applied_job_ids)
+    search = request.args.get("search", "")
+    if search:
+        approved_drives = Job.query.filter(Job.status == 'approved', Job.title.contains(search) | Job.skills.contains(search) | Job.company.has(Company.name.contains(search))).all()
+    else:
+        approved_drives = Job.query.filter_by(status = 'approved').all()
+    notifications = Application.query.filter_by(student_id=student.id, notified=False).filter(Application.status != 'applied').all()
+    return render_template("student_dashboard.html", student=student, approved_drives = approved_drives, my_applications = my_applications, applied_job_ids = applied_job_ids, search=search, notifications=notifications)
 
 @app.route("/company_dashboard" )
 def company_dashboard():
@@ -207,6 +232,7 @@ def update_application(application_id):
     status = request.form.get("status")
     application = Application.query.get(application_id)
     application.status = status
+    application.notified = False
     db.session.commit()
     flash("Application status updated!", "success")
     return redirect(url_for('view_applications', drive_id = application.job_id))
@@ -241,7 +267,7 @@ def reject_drive(drive_id):
     if session.get('role') != 'admin':
         return redirect(url_for('home'))
     drive = Job.query.get(drive_id)
-    drive.status = 'approved'
+    drive.status = 'rejected'
     db.session.commit()
     flash("Drive rejected!", "danger")
     return redirect(url_for('admin_dashboard'))
@@ -259,20 +285,32 @@ def toggle_drive_status(drive_id):
     flash("Drive status updated!", "success")
     return redirect(url_for('company_dashboard'))
 
-@app.route("/upload_resume", methods=["POST"])
-def upload_resume():
+
+@app.route("/update_profile", methods=["GET","POST"])
+def update_profile():
     if session.get('role') != 'student':
         return redirect(url_for('home'))
-    student = Student.query.get((session['student_id']))
-    file = request.files.get("resume")
-    if file:
-        filename = f"student_{student.id}_{file.filename.replace(' ','_')}"
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        student.resume = filename
+    student = Student.query.get(session['student_id'])
+    if request.method == "POST":
+        student.name = request.form.get("name")
+        student.department = request.form.get("department")
+        student.skills = request.form.get("skills")
+        file = request.files.get("resume")
+        if file and file.filename != "":
+            filename = f"student_{student.id}_{file.filename.replace(' ','_')}"
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            student.resume = filename
         db.session.commit()
-        flash("Resume upload successfully", "success")
-    return redirect(url_for('student_dashboard'))
+        flash("Profile updated successfully!", "success")
+        return redirect(url_for('student_dashboard'))
+    return render_template("update_profile.html", student = student)
 
+@app.route("/mark_notified/<int:application_id>", methods=["POST"])
+def mark_notified(application_id):
+    application = Application.query.get(application_id)
+    application.notified = True 
+    db.session.commit()
+    return redirect(url_for('student_dashboard'))
 
 with app.app_context():
     db.create_all()

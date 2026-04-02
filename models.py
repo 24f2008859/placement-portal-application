@@ -16,7 +16,7 @@ class Company(db.Model):
     website = db.Column(db.String(200), nullable = True)
     is_approved = db.Column(db.Boolean, default = False)
     is_active = db.Column(db.Boolean, default=True)
-    department = db.Column(db.String(100), nullable = True)
+    industry = db.Column(db.String(100), nullable = True)
 
 class Student(db.Model):
     id = db.Column(db.Integer, primary_key = True)
@@ -26,6 +26,7 @@ class Student(db.Model):
     department = db.Column(db.String(100), nullable = False)
     is_active = db.Column(db.Boolean, default=True)
     resume = db.Column(db.String(200), nullable = True)
+    skills = db.Column(db.String(200), nullable = True)
 
 class Job(db.Model):
     id = db.Column(db.Integer, primary_key = True)
@@ -44,6 +45,7 @@ class Application(db.Model):
     student_id = db.Column(db.Integer, db.ForeignKey('student.id'))
     job_id = db.Column(db.Integer, db.ForeignKey('job.id'))
     status = db.Column(db.String(50), default = "applied")
+    notified = db.Column(db.Boolean, default = False)
     student = db.relationship('Student', backref='applications')
     job = db.relationship('Job', backref='applications')
 

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}PlaceMe - Campus Placement Portal{% endblock %}
+{% block content %}
+
+<div class="d-flex justify-content-center align-items-center vh-100">
+    <div class="text-center">
+        <h1 class="display-4 fw-bold mb-3">
+            Welcome to PlaceMe
+        </h1>
+        <p class="lead mb-4">Campus Placement Portal</p>
+        <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg me-2">Login</a>
+        <a href="{{ url_for('student_register') }}" class="btn btn-success btn-lg me-2">Student Register</a>
+        <a href="{{ url_for('recruiter_register') }}" class="btn btn-warning btn-lg">Recruiter Register</a>
+    </div>
+
+</div>
+
+{% endblock %}

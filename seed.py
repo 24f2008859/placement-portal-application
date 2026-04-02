@@ -13,13 +13,13 @@ with app.app_context():
     # Companies
     c1 = Company(name="Google", email="google@test.com",
                 password="test123", website="google.com",
-                department="Software")
+                industry="Software")
     c2 = Company(name="Amazon", email="amazon@test.com",
                 password="test123", website="amazon.com",
-                department="E-Commerce")
+                industry="E-Commerce")
     c3 = Company(name="Infosys", email="infosys@test.com",
                 password="test123", website="infosys.com",
-                department="IT Services")
+                industry="IT Services")
 
     # Add all at once
     db.session.add_all([s1, s2, s3, c1, c2, c3])

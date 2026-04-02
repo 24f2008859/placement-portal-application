@@ -10,9 +10,24 @@
                 <h5><strong>Name:</strong> {{ student.name }}</h5>
                 <h5><strong>Email:</strong> {{ student.email }}</h5>
                 <h5><strong>Department:</strong> {{ student.department }}</h5>
+                <h5><strong>Skills:</strong>{{ student.skills }}</h5>
+                <h5><strong>Resume:</strong>
+                    {% if student.resume %}
+                        <a href="{{ url_for('static', filename='resumes/' + student.resume) }}" target="_blank">View Resume</a>
+                    {% else %}
+                        Not uploaded yet
+                    {% endif %}
+                </h5>
             </div>
+            <a href="{{ url_for('update_profile') }}" class="btn btn-warning">Update Profile</a>
         </div>
     </div>
+    <form action="{{ url_for('student_dashboard') }}" method="GET">
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" name="search" value="{{ search }}" placeholder="Search by job title, company or skills">
+            <button class="btn btn-primary" type="submit">Search</button>
+        </div>
+    </form>
     <h4 class="mb-3">Ongoing Drives</h4>
     {% if approved_drives %}
     <table class="table table-bordered">
@@ -69,25 +84,18 @@
     {% else %}
     <p>Not applied yet!</p>
     {% endif %}
-</div>
-<div class="row justify-content-center mb-4">
-    <div class="col-md-6">
-        <div class="card p-4">
-            <h4 class="text-center mb-3">Upload Resume</h4>
-            <form action="{{ url_for('upload_resume')}}" method="POST" enctype="multipart/form-data">
-                <div class="mb-3">
-                    <input type="file" class="form-control" name="resume" accept=".pdf">
-                </div>
-                <button type="submit" class="btn btn-primary w-100">Upload Resume</button>
+    {% if notifications %}
+    <div class="container mt-3">
+        {% for notification in notifications %}
+        <div class="alert alert-info">
+            Your application for <strong>{{ notification.job.title }}</strong> at <strong>{{ notification.job.company.name }}</strong> has been <strong>{{ notification.status | capitalize }}</strong>!
+            <form action="{{ url_for('mark_notified', application_id = notification.id) }}" method="POST" class="d-inline">
+                <button type="submit" class="btn btn-sm btn-outline-info ms-2">Dismiss</button>
             </form>
-            {% if student.resume %}
-            <p class="mt-2 text-success">
-                Resume uploaded!
-            </p>
-            {% endif %}
         </div>
-
+        {% endfor %}
     </div>
+    {% endif %}
 </div>
 
 {% endblock %}
