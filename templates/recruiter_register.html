@@ -9,15 +9,15 @@
                     
                     <div class="mb-3">
                         <label for="full-name">Recruiter Name</label>
-                        <input type="text" class="form-control" id="full-name" name = "name" placeholder="Enter your name">
+                        <input type="text" class="form-control" id="full-name" name = "name" placeholder="Enter your name" required minlength="3">
                     </div>
                     <div class="mb-3">
                         <label for="email">Official Email Address</label>
-                        <input type="email" class="form-control" id="email" name = "email" placeholder="Enter your email">
+                        <input type="email" class="form-control" id="email" name = "email" placeholder="Enter your email" required>
                     </div>
                     <div class="mb-3">
                         <label for="industry">Industry</label>
-                        <input type="text" class="form-control" id="industry" name = "industry" placeholder="Enter your industry">
+                        <input type="text" class="form-control" id="industry" name = "industry" placeholder="Enter your industry" required>
                     </div>
                     <div class="mb-3">
                         <label for="website">Recruiter Website</label>
@@ -25,11 +25,11 @@
                     </div>
                     <div class="mb-3">
                         <label for="password">Password</label>
-                        <input type="password" class="form-control" id="password" name = "password" placeholder="Enter password">
+                        <input type="password" class="form-control" id="password" name = "password" placeholder="Enter password" required minlength="6">
                     </div>
                     <div class="mb-3">
                         <label for="confirm-password">Confirm password</label>
-                        <input type="password" class="form-control" id="confirm-password" name = "confirm-password" placeholder="Retype your password">
+                        <input type="password" class="form-control" id="confirm-password" name = "confirm-password" placeholder="Retype your password" required minlength="6">
                     </div>
                     
                     <button type="submit" class="btn btn-primary w-100">Register</button>

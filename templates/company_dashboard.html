@@ -22,11 +22,11 @@
                 <form action="{{ url_for('create_drive')}}" method="POST">
                     <div class="mb-3">
                         <label for="title">Job Title</label>
-                        <input type="text" class="form-control" id="title" name="title" placeholder="Enter job title">
+                        <input type="text" class="form-control" id="title" name="title" placeholder="Enter job title" required>
                     </div>
                     <div class="mb-3">
                         <label for="description">Job Description</label>
-                        <textarea class="form-control" id="description" name="description" rows="4" placeholder="Enter job description"></textarea>
+                        <textarea class="form-control" id="description" name="description" rows="4" placeholder="Enter job description" required></textarea>
                     </div>
                     <div class="mb-3">
                         <label for="skills">Required skills</label>
@@ -42,7 +42,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="deadline">Application Deadline</label>
-                        <input type="date" class="form-control" id="deadline" name="deadline">
+                        <input type="date" class="form-control" id="deadline" name="deadline" required>
                     </div>
                     <button type="submit" class="btn btn-primary w-100">
                         Create Drive

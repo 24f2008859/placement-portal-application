@@ -21,6 +21,16 @@ def login():
     if request.method == "POST":
         email = request.form.get("email")
         password = request.form.get("password")
+
+        # Validation
+        if not email or not password:
+            flash("Email and password are required!", "danger")
+            return render_template("login.html")
+        
+        if len(password) < 6:
+            flash("password must be at least 6 characters!", "danger")
+            return render_template("login.html")
+        
         admin = Admin.query.filter_by(username=email).first()
         student = Student.query.filter_by(email=email).first()
         company = Company.query.filter_by(email=email).first()
@@ -41,6 +51,8 @@ def login():
         else:
             flash("Invalid credentials")
     return render_template("login.html")
+
+
 @app.route("/logout")
 def logout():
     session.clear()
@@ -50,11 +62,30 @@ def logout():
 @app.route("/student_register", methods=["GET","POST"])
 def student_register():
     if request.method == "POST":
+        # 1. get all form data
         name = request.form.get("name")
         email = request.form.get("email")
         password = request.form.get("password")
         department = request.form.get("department")
         skills = request.form.get("skills")
+        # 2. Validate
+        errors = []
+        if not name or len(name) < 3:
+            errors.append("Name must be atleast 3 characters")
+        if not email or "@" not in email:
+            errors.append("Invalid email address")
+        if not password or len(password) < 6:
+            errors.append("Password must be at least 6 characters!")
+        confirm_password = request.form.get("confirm-password")
+        if password != confirm_password:
+            errors.append("Passwords do not match")
+        if not department:
+            errors.append("Department is required!")
+        if errors:
+            for error in errors:
+                flash(error, "danger")
+            return render_template("student_register.html")
+        
         existing = Student.query.filter_by(email=email).first()
         if existing:
             flash("Email already registered!", "danger")
@@ -80,6 +111,24 @@ def recruiter_register():
         password = request.form.get("password")
         industry = request.form.get("industry")
         website = request.form.get("website")
+
+        errors = []
+        if not name or len(name) < 3:
+            errors.append("Name must be atleast 3 characters")
+        if not email or "@" not in email:
+            errors.append("Invalid email address")
+        if not password or len(password) < 6:
+            errors.append("Password must be at least 6 characters!")
+        confirm_password = request.form.get("confirm-password")
+        if password != confirm_password:
+            errors.append("Passwords do not match")
+        if not industry:
+            errors.append("Industry is required!")
+        if errors:
+            for error in errors:
+                flash(error, "danger")
+            return render_template("recruiter_register.html")
+
         existing = Company.query.filter_by(email=email).first()
         if existing:
             flash("Email already registered!", "danger")
@@ -208,6 +257,19 @@ def create_drive():
     salary = request.form.get("salary")
     deadline = request.form.get("deadline")
     company_id = session['company_id']
+
+    errors = []
+    if not title:
+        errors.append("Job title is required!")
+    if not description:
+        errors.append("Job description is required!")
+    if not deadline:
+        errors.append("Application deadline is required!")
+    if errors:
+        for error in errors:
+            flash(error, "danger")
+        return redirect(url_for('company_dashboard'))
+
     new_drive = Job(title = title, description=description, company_id=company_id, skills = skills, experience = experience, salary = salary, deadline = deadline)
     db.session.add(new_drive)
     db.session.commit()
