@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 from flask_sqlalchemy import SQLAlchemy 
 from models import db, Admin, Company, Student, Job, Application, Placement
 import os
@@ -373,6 +373,92 @@ def mark_notified(application_id):
     application.notified = True 
     db.session.commit()
     return redirect(url_for('student_dashboard'))
+
+@app.route("/api/students", methods = ["GET"])
+def api_students():
+    students = Student.query.all()
+    return jsonify([{
+        "id": s.id,
+        "name": s.name,
+        "email": s.email,
+        "department": s.department,
+        "skills": s.skills
+    } for s in students])
+
+@app.route("/api/companies", methods = ["GET"])
+def api_companies():
+    companies = Company.query.all()
+    return jsonify([{
+        "id": c.id,
+        "name": c.name,
+        "email": c.email,
+        "industry": c.industry,
+        "website": c.website,
+        "is_approved": c.is_approved
+    } for c in companies])
+
+@app.route("/api/jobs", methods = ["GET"])
+def api_jobs():
+    jobs = Job.query.all()
+    return jsonify([{
+        "id": j.id,
+        "title": j.title,
+        "description": j.description,
+        "experience": j.experience,
+        "salary": j.salary,
+        "skills": j.skills,
+        "deadline": j.deadline,
+        "status": j.status,
+        "company": j.company.name
+    } for j in jobs])
+
+@app.route("/api/applications", methods = ["GET"])
+def api_applications():
+    applications = Application.query.all()
+    return jsonify([{
+        "id": a.id,
+        "student": a.student.name,
+        "job": a.job.title,
+        "company": a.job.company.name,
+        "status": a.status
+    } for a in applications])
+
+@app.route("/api/jobs", methods = ["POST"])
+def api_create_job():
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "No data provided"}), 400
+    title = data.get("title")
+    description = data.get("description")
+    company_id = data.get("company_id")
+    if not title or not description or not company_id:
+        return jsonify({"error": "Title, description and company_id are required"})
+    new_job = Job(title=title, description=description, company_id=company_id)
+    db.session.add(new_job)
+    db.session.commit()
+    return jsonify({"message": "Job created!", "id": new_job.id}), 201
+
+@app.route("/api/applications/<int:application_id>", methods=["PUT"])
+def api_update_application(application_id):
+    application = Application.query.get(application_id)
+    if not application:
+        return jsonify({"error": "Application not found"}), 404
+    data = request.get_json()
+    status = data.get("status")
+    if not status:
+        return jsonify({"error": "Status is required"}), 400
+    application.status = status
+    db.session.commit()
+    return jsonify({"message": "Status updated!", "status": application.status})
+
+@app.route("/api/jobs/<int:job_id>", methods=["DELETE"])
+def api_delete_job(job_id):
+    job = Job.query.get(job_id)
+    if not job:
+        return jsonify({"error": "Job not found"}), 404
+    db.session.delete(job)
+    db.session.commit()
+    return jsonify({"message": "Job deleted!"}), 200
 
 with app.app_context():
     db.create_all()
