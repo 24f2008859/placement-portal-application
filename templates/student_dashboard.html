@@ -30,59 +30,66 @@
     </form>
     <h4 class="mb-3">Ongoing Drives</h4>
     {% if approved_drives %}
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Drive Id</th>
-                <th>Company Name</th>
-                <th>Job Title</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for drive in approved_drives %}
-            <tr>
-                <td>{{ drive.id }}</td>
-                <td>{{ drive.company.name }}</td>
-                <td>{{ drive.title }}</td>
-                <td>
-                    {% if drive.id in applied_job_ids %}
-                        <span class="badge bg-success">Applied</span>
-                    {% else %}
-                        <form action="{{ url_for('apply', drive_id = drive.id)}}" method="POST">
-                            <button type="submit" class="btn btn-primary btn-sm">Apply</button>
-                        </form>
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Drive Id</th>
+                    <th>Company Name</th>
+                    <th>Job Title</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for drive in approved_drives %}
+                <tr>
+                    <td>{{ drive.id }}</td>
+                    <td>{{ drive.company.name }}</td>
+                    <td>{{ drive.title }}</td>
+                    <td>
+                        {% if drive.id in applied_job_ids %}
+                            <span class="badge bg-success">Applied</span>
+                        {% else %}
+                            <form action="{{ url_for('apply', drive_id = drive.id)}}" method="POST">
+                                <button type="submit" class="btn btn-primary btn-sm">Apply</button>
+                            </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
     {% else %}
-    <p>No applications</p>
+        <p>No applications</p>
+    
     {% endif %}
+    
     <h4 class="mb-3">My applications</h4>
     {% if my_applications %}
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Job Title</th>
-                <th>Company</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for app in my_applications %}
-            <tr>
-                <td>{{ app.job.title }}</td>
-                <td>{{ app.job.company.name }}</td>
-                <td>{{ app.status | capitalize }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Job Title</th>
+                    <th>Company</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for app in my_applications %}
+                <tr>
+                    <td>{{ app.job.title }}</td>
+                    <td>{{ app.job.company.name }}</td>
+                    <td>{{ app.status | capitalize }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
     {% else %}
-    <p>Not applied yet!</p>
+        <p>Not applied yet!</p>
+    
     {% endif %}
     {% if notifications %}
     <div class="container mt-3">

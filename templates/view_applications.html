@@ -4,6 +4,7 @@
 
 <h4 class="mb-3">Application for {{ drive.title }}</h4>
 {% if applications %}
+<div class="table-responsive">
 <table class="table table-bordered">
     <thead>
         <tr>
@@ -30,6 +31,7 @@
                         <option value="selected">Selected</option>
                         <option value="placed">Placed</option>
                         <option value="rejected">Rejected</option>
+                        <option value="interview">Interview</option>
                     </select>
                     <button type="submit" class="btn btn-primary btn-sm mt-1">Update</button>
                 </form>
@@ -45,8 +47,10 @@
         {% endfor %}
     </tbody>
 </table>
+</div>
 {% else %}
-<p>No applications yet!</p>
+    <p>No applications yet!</p>
+
 {% endif %}
 
 {% endblock %}

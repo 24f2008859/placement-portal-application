@@ -52,36 +52,40 @@
         </div>
     </div>
     {% if drives %}
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Drive Id</th>
-                <th>Job Title</th>
-                <th>Status</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for drive in drives %}
-            <tr>
-                <td>{{ drive.id }}</td>
-                <td>{{ drive.title }}</td>
-                <td>{{ drive.status | capitalize }}</td>
-                <td>
-                    <a href="{{ url_for('view_applications', drive_id = drive.id) }}" class="btn btn-primary btn-sm">View Applications</a>
-                    <form action="{{ url_for('toggle_drive_status', drive_id = drive.id)}}" method="POST">
-                        <button type="submit" class="btn btn-warning btn-sm">
-                            {{ "Close Drive" if drive.status == 'approved' else "Reopen Drive"}}
-                        </button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Drive Id</th>
+                    <th>Job Title</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for drive in drives %}
+                <tr>
+                    <td>{{ drive.id }}</td>
+                    <td>{{ drive.title }}</td>
+                    <td>{{ drive.status | capitalize }}</td>
+                    <td>
+                        <a href="{{ url_for('view_applications', drive_id = drive.id) }}" class="btn btn-primary btn-sm">View Applications</a>
+                        <form action="{{ url_for('toggle_drive_status', drive_id = drive.id)}}" method="POST">
+                            <button type="submit" class="btn btn-warning btn-sm">
+                                {{ "Close Drive" if drive.status == 'approved' else "Reopen Drive"}}
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
     {% else %}
-    <p>No drives created yet!</p>
+        <p>No drives created yet!</p>
+    
     {% endif %}
+    
 </div>
 
 
