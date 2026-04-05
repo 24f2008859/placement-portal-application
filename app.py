@@ -145,7 +145,7 @@ def recruiter_register():
 @app.route("/admin_dashboard")
 def admin_dashboard():
     if session.get('role') != 'admin':
-        flash("Unauthorized access!", "danger")
+        flash("Please login first!", "warning")
         return redirect(url_for('home'))
     total_students = Student.query.count()
     total_companies = Company.query.count()
@@ -191,7 +191,7 @@ def admin_dashboard():
 @app.route("/student_dashboard")
 def student_dashboard():
     if session.get('role') != 'student':
-        flash("Unauthorized access!", "danger")
+        flash("Please login first!", "warning")
         return redirect(url_for('home'))
     student = Student.query.get(session['student_id'])
     my_applications = Application.query.filter_by(student_id = student.id).all()
@@ -207,7 +207,7 @@ def student_dashboard():
 @app.route("/company_dashboard" )
 def company_dashboard():
     if session.get('role') != 'company':
-        flash("Unauthorized access!", "danger")
+        flash("Please login first!", "warning")
         return redirect(url_for('home'))
     company = Company.query.get(session['company_id'])
     drives = Job.query.filter_by(company_id = company.id).all()

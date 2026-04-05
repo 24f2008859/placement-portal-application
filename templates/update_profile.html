@@ -17,7 +17,7 @@
                     </div>
                     <div class="mb-3">
                         <label>Skills</label>
-                        <input type="text" class="form-control" name="skills" value="{{ student.skills }}">
+                        <input type="text" class="form-control" name="skills" value="{{ student.skills or '' }}" placeholder="e.g. Python, Flask, Sql">
                     </div>
                     <div class="mb-3">
                         <label>Resume</label>

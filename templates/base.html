@@ -9,10 +9,12 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand" href="#">PlaceMe</a>
+            <a class="navbar-brand" href="{{ url_for('home') }}">PlaceMe</a>
             <div class="ms-auto">
-                {% if request.endpoint not in ['home', 'register'] %}
-                <a class="btn btn-outline-light" href="{{ url_for('logout')}}">Logout</a>
+                {% if request.endpoint not in ['home', 'login', 'student_register', 'recruiter_register'] %}
+                    <a class="btn btn-outline-light" href="{{ url_for('logout')}}">Logout</a>
+                {% else %}
+                    <a class="btn btn-outline-light" href="{{ url_for('home') }}">Home</a>
                 {% endif %}
             </div>
         </div>

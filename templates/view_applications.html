@@ -20,8 +20,8 @@
         {% for application in applications %}
         <tr>
             <td>{{ application.student.id }}</td>
-            <td>{{ application.student.name }}</td>
-            <td>{{ application.student.email }}</td>
+            <td>{{ application.student.name if application.student else 'N/A'}}</td>
+            <td>{{ application.student.email if application.student else 'N/A' }}</td>
             <td>{{ application.status | capitalize }}</td>
             <td>
                 <form action="{{ url_for('update_application', application_id = application.id) }}" method="POST">

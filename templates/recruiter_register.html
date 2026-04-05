@@ -33,7 +33,10 @@
                     </div>
                     
                     <button type="submit" class="btn btn-primary w-100">Register</button>
-                    <p class="text-center mt-3">Already have an account? <a href="{{url_for ('login') }}">Login here</a></p>
+                    <p class="text-center mt-3">Already have an account? <a href="{{ url_for ('login') }}">Login here</a>
+                        <br>
+                        Are you Student? <a href="{{ url_for('student_register') }}"> Register here</a>
+                    </p>
             </div>
         </div>
     </form>

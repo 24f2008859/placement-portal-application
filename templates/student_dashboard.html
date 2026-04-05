@@ -79,8 +79,8 @@
             <tbody>
                 {% for app in my_applications %}
                 <tr>
-                    <td>{{ app.job.title }}</td>
-                    <td>{{ app.job.company.name }}</td>
+                    <td>{{ app.job.title if app.job else 'N/A' }}</td>
+                    <td>{{ app.job.company.name if app.job and app.job.company else 'N/A' }}</td>
                     <td>{{ app.status | capitalize }}</td>
                 </tr>
                 {% endfor %}
@@ -95,7 +95,7 @@
     <div class="container mt-3">
         {% for notification in notifications %}
         <div class="alert alert-info">
-            Your application for <strong>{{ notification.job.title }}</strong> at <strong>{{ notification.job.company.name }}</strong> has been <strong>{{ notification.status | capitalize }}</strong>!
+            Your application for <strong>{{ notification.job.title if notification.job else 'N/A' }}</strong> at <strong>{{ notification.job.company.name if notification.job and notification.job.company else 'N/A' }}</strong> has been <strong>{{ notification.status | capitalize }}</strong>!
             <form action="{{ url_for('mark_notified', application_id = notification.id) }}" method="POST" class="d-inline">
                 <button type="submit" class="btn btn-sm btn-outline-info ms-2">Dismiss</button>
             </form>
