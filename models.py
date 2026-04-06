@@ -39,6 +39,7 @@ class Job(db.Model):
     salary = db.Column(db.String(200), nullable = True)
     deadline = db.Column(db.String(200), nullable = True)
     company = db.relationship('Company', backref='jobs')
+    eligibility = db.Column(db.String(200), nullable = True)
 
 class Application(db.Model):
     id = db.Column(db.Integer, primary_key = True)

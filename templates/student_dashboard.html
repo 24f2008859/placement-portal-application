@@ -38,6 +38,7 @@
                     <th>Company Name</th>
                     <th>Job Title</th>
                     <th>Actions</th>
+                    <th>Eligibility</th>
                 </tr>
             </thead>
             <tbody>
@@ -46,6 +47,7 @@
                     <td>{{ drive.id }}</td>
                     <td>{{ drive.company.name }}</td>
                     <td>{{ drive.title }}</td>
+                    <td>{{ drive.eligibility or 'No criteria' }}</td>
                     <td>
                         {% if drive.id in applied_job_ids %}
                             <span class="badge bg-success">Applied</span>

@@ -256,6 +256,7 @@ def create_drive():
     experience = request.form.get("experience")
     salary = request.form.get("salary")
     deadline = request.form.get("deadline")
+    eligibility = request.form.get("eligibility")
     company_id = session['company_id']
 
     errors = []
@@ -270,7 +271,7 @@ def create_drive():
             flash(error, "danger")
         return redirect(url_for('company_dashboard'))
 
-    new_drive = Job(title = title, description=description, company_id=company_id, skills = skills, experience = experience, salary = salary, deadline = deadline)
+    new_drive = Job(title = title, description=description, company_id=company_id, skills = skills, experience = experience, salary = salary, deadline = deadline, eligibility=eligibility)
     db.session.add(new_drive)
     db.session.commit()
     flash("Drive created! Waiting for admin approval.", "success")
