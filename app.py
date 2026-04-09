@@ -13,7 +13,8 @@ app.app_context().push()
 
 @app.route("/", methods = ["GET", "POST"])
 def home():
-    return render_template("home.html")
+    latest_drives = Job.query.filter_by(status = 'approved').limit(3).all()
+    return render_template("home.html", latest_drives=latest_drives)
 
 
 @app.route("/login", methods=["GET","POST"])

@@ -2,55 +2,53 @@
 {% block title %}Drive | Place Me {% endblock %}
 {% block content %}
 
-<h4 class="mb-3">Application for {{ drive.title }}</h4>
-{% if applications %}
-<div class="table-responsive">
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Student ID</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Status</th>
-            <th>Actions</th>
-            <th>Resume</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for application in applications %}
-        <tr>
-            <td>{{ application.student.id }}</td>
-            <td>{{ application.student.name if application.student else 'N/A'}}</td>
-            <td>{{ application.student.email if application.student else 'N/A' }}</td>
-            <td>{{ application.status | capitalize }}</td>
-            <td>
-                <form action="{{ url_for('update_application', application_id = application.id) }}" method="POST">
-                    <select name="status" class="form-select form-select-sm">
-                        <option value="applied">Applied</option>
-                        <option value="shortlisted">Shortlisted</option>
-                        <option value="selected">Selected</option>
-                        <option value="placed">Placed</option>
-                        <option value="rejected">Rejected</option>
-                        <option value="interview">Interview</option>
-                    </select>
-                    <button type="submit" class="btn btn-primary btn-sm mt-1">Update</button>
-                </form>
-            </td>
-            <td>
-                {% if application.student.resume %}
-                    <a href="{{ url_for('static', filename='resumes/'+application.student.resume) }}" target="_blank" class="btn btn-info btn-sm">View Resume</a>
-                {% else %}
-                    <span class="text-muted">No resume</span>
-                {% endif %}
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="card shadow-sm p-3">
+    <h5 class="mb-3">Application for {{ drive.title }}</h5>
+    {% if applications %}
+    <div class="table-responsive">
+    <table class="table table-hover align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>Student ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Status</th>
+                <th>Actions</th>
+                <th>Resume</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for application in applications %}
+            <tr>
+                <td>{{ application.student.id }}</td>
+                <td>{{ application.student.name if application.student else 'N/A'}}</td>
+                <td>{{ application.student.email if application.student else 'N/A' }}</td>
+                <td>{{ application.status | capitalize }}</td>
+                <td>
+                    <form action="{{ url_for('update_application', application_id = application.id) }}" method="POST">
+                        <select name="status" class="form-select form-select-sm">
+                            <option value="shortlisted">Shortlisted</option>
+                            <option value="selected">Selected</option>
+                            <option value="rejected">Rejected</option>
+                        </select>
+                        <button type="submit" class="btn btn-primary btn-sm mt-1">Update</button>
+                    </form>
+                </td>
+                <td>
+                    {% if application.student.resume %}
+                        <a href="{{ url_for('static', filename='resumes/'+application.student.resume) }}" target="_blank" class="btn btn-info btn-sm">View Resume</a>
+                    {% else %}
+                        <span class="text-muted">No resume</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </div>
+    {% else %}
+        <p>No applications yet!</p>
+
+    {% endif %}
 </div>
-{% else %}
-    <p>No applications yet!</p>
-
-{% endif %}
-
 {% endblock %}

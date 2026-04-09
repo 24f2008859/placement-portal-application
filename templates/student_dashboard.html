@@ -1,110 +1,153 @@
 {% extends "base.html" %}
 {% block title %}Student Dashboard | PlaceMe{% endblock %}
+
 {% block content %}
 
-<div class="container mt-4">
-    <div class="row mb-4">
-        <div class="col-md-6">
-            <div class="card p-4">
-                <h4 class="text-center mb-3">Student Profile</h4>
-                <h5><strong>Name:</strong> {{ student.name }}</h5>
-                <h5><strong>Email:</strong> {{ student.email }}</h5>
-                <h5><strong>Department:</strong> {{ student.department }}</h5>
-                <h5><strong>Skills:</strong>{{ student.skills }}</h5>
-                <h5><strong>Resume:</strong>
-                    {% if student.resume %}
-                        <a href="{{ url_for('static', filename='resumes/' + student.resume) }}" target="_blank">View Resume</a>
-                    {% else %}
-                        Not uploaded yet
-                    {% endif %}
-                </h5>
+<div class="row mb-4">
+
+
+    <div class="col-md-4">
+        <div class="card p-4 shadow-sm h-100">
+            <h5 class="mb-3">Student Profile</h5>
+
+            <p><strong>Name:</strong> {{ student.name }}</p>
+            <p><strong>Email:</strong> {{ student.email }}</p>
+            <p><strong>Department:</strong> {{ student.department }}</p>
+            <p><strong>Skills:</strong> {{ student.skills }}</p>
+
+            <p>
+                <strong>Resume:</strong><br>
+                {% if student.resume %}
+                    <a href="{{ url_for('static', filename='resumes/' + student.resume) }}" target="_blank">
+                        View Resume
+                    </a>
+                {% else %}
+                    <span class="text-muted">Not uploaded</span>
+                {% endif %}
+            </p>
+
+            <a href="{{ url_for('update_profile') }}" class="btn btn-warning w-100">
+                Update Profile
+            </a>
+        </div>
+    </div>
+
+    
+    <div class="col-md-8">
+
+        
+        <form method="GET">
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" name="search" value="{{ search }}" placeholder="Search jobs...">
+                <button class="btn btn-primary">Search</button>
             </div>
-            <a href="{{ url_for('update_profile') }}" class="btn btn-warning">Update Profile</a>
+        </form>
+
+        
+        <h5 class="mb-3">Ongoing Drives</h5>
+
+        <div class="card p-3 shadow-sm mb-4">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Company</th>
+                            <th>Role</th>
+                            <th>Eligibility</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for drive in approved_drives %}
+                        <tr>
+                            <td>{{ drive.id }}</td>
+                            <td>{{ drive.company.name }}</td>
+                            <td><strong>{{ drive.title }}</strong></td>
+                            <td>
+                                <span class="badge bg-info">
+                                    {{ drive.eligibility or 'Open' }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if drive.id in applied_job_ids %}
+                                    <span class="badge bg-success">Applied</span>
+                                {% else %}
+                                    <form action="{{ url_for('apply', drive_id=drive.id) }}" method="POST">
+                                        <button class="btn btn-outline-primary btn-sm">Apply</button>
+                                    </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+
+                </table>
+            </div>
         </div>
-    </div>
-    <form action="{{ url_for('student_dashboard') }}" method="GET">
-        <div class="input-group mb-3">
-            <input type="text" class="form-control" name="search" value="{{ search }}" placeholder="Search by job title, company or skills">
-            <button class="btn btn-primary" type="submit">Search</button>
+
+        
+        <h5 class="mb-3">My Applications</h5>
+
+        {% if my_applications %}
+        <div class="card p-3 shadow-sm mb-4">
+            <div class="table-responsive">
+                <table class="table table-bordered align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Job Title</th>
+                            <th>Company</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for app in my_applications %}
+                        <tr>
+                            <td>{{ app.job.title if app.job else 'N/A' }}</td>
+                            <td>{{ app.job.company.name if app.job and app.job.company else 'N/A' }}</td>
+                            <td>
+                                <span class="badge 
+                                    {% if app.status == 'selected' %}bg-success
+                                    {% elif app.status == 'rejected' %}bg-danger
+                                    {% else %}bg-secondary{% endif %}">
+                                    {{ app.status | capitalize }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+
+                </table>
+            </div>
         </div>
-    </form>
-    <h4 class="mb-3">Ongoing Drives</h4>
-    {% if approved_drives %}
-    <div class="table-responsive">
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Drive Id</th>
-                    <th>Company Name</th>
-                    <th>Job Title</th>
-                    <th>Actions</th>
-                    <th>Eligibility</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for drive in approved_drives %}
-                <tr>
-                    <td>{{ drive.id }}</td>
-                    <td>{{ drive.company.name }}</td>
-                    <td>{{ drive.title }}</td>
-                    <td>{{ drive.eligibility or 'No criteria' }}</td>
-                    <td>
-                        {% if drive.id in applied_job_ids %}
-                            <span class="badge bg-success">Applied</span>
-                        {% else %}
-                            <form action="{{ url_for('apply', drive_id = drive.id)}}" method="POST">
-                                <button type="submit" class="btn btn-primary btn-sm">Apply</button>
-                            </form>
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    {% else %}
-        <p>No applications</p>
-    
-    {% endif %}
-    
-    <h4 class="mb-3">My applications</h4>
-    {% if my_applications %}
-    <div class="table-responsive">
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Job Title</th>
-                    <th>Company</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for app in my_applications %}
-                <tr>
-                    <td>{{ app.job.title if app.job else 'N/A' }}</td>
-                    <td>{{ app.job.company.name if app.job and app.job.company else 'N/A' }}</td>
-                    <td>{{ app.status | capitalize }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    {% else %}
-        <p>Not applied yet!</p>
-    
-    {% endif %}
-    {% if notifications %}
-    <div class="container mt-3">
-        {% for notification in notifications %}
-        <div class="alert alert-info">
-            Your application for <strong>{{ notification.job.title if notification.job else 'N/A' }}</strong> at <strong>{{ notification.job.company.name if notification.job and notification.job.company else 'N/A' }}</strong> has been <strong>{{ notification.status | capitalize }}</strong>!
-            <form action="{{ url_for('mark_notified', application_id = notification.id) }}" method="POST" class="d-inline">
-                <button type="submit" class="btn btn-sm btn-outline-info ms-2">Dismiss</button>
-            </form>
+        {% else %}
+            <p class="text-muted">Not applied yet!</p>
+        {% endif %}
+
+        
+        {% if notifications %}
+        <div class="card p-3 shadow-sm">
+            <h5 class="mb-3">Notifications</h5>
+
+            {% for notification in notifications %}
+            <div class="alert alert-info d-flex justify-content-between align-items-center">
+                <div>
+                    <strong>{{ notification.job.title }}</strong> - 
+                    {{ notification.status | capitalize }}
+                </div>
+
+                <form action="{{ url_for('mark_notified', application_id=notification.id) }}" method="POST">
+                    <button class="btn btn-sm btn-outline-dark">Dismiss</button>
+                </form>
+            </div>
+            {% endfor %}
         </div>
-        {% endfor %}
+        {% endif %}
+
     </div>
-    {% endif %}
+
 </div>
 
 {% endblock %}

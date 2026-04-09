@@ -2,262 +2,300 @@
 {% block title %}Admin Dashboard | PlaceMe{% endblock %}
 {% block content %}
 
+
 <div class="container mt-4">
     <div class="row mb-4">
         <div class="col-md-3">
-            <div class="card bg-primary text-white text-center p-3">
+            <div class="card shadow-sm text-center p-3 border-0 bg-primary text-white">
                 <h5>Total Students</h5>
                 <h2>{{ total_students }}</h2>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card bg-success text-white text-center p-3">
+            <div class="card shadow-sm text-center p-3 border-0 bg-success text-white">
                 <h5>Total Companies</h5>
                 <h2>{{ total_companies }}</h2>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card bg-warning text-white text-center p-3">
+            <div class="card shadow-sm text-center p-3 border-0 bg-warning text-white">
                 <h5>Total Drives</h5>
                 <h2>{{ total_drives }}</h2>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card bg-danger text-white text-center p-3">
+            <div class="card shadow-sm text-center p-3 border-0 bg-danger text-white">
                 <h5>Total Applications</h5>
                 <h2>{{ total_applications }}</h2>
             </div>
         </div>
     </div>
 
-    <h4 class="mb-3">Pending Company approvals</h4>
-    {% if pending_companies %}
-    <div class="table-responsive">
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Website</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for company in pending_companies %}
-                <tr>
-                    <td>{{ company.name }}</td>
-                    <td>{{ company.email }}</td>
-                    <td>{{ company.website }}</td>
-                    <td>
-                        <form action="{{ url_for('approve_company', company_id = company.id) }}" method="POST">
-                            <button type="submit" class="btn btn-success btn-sm">Approve</button>
-                        </form>
-                        <form action="{{ url_for('reject_company', company_id = company.id) }}" method="POST">
-                            <button type="submit" class="btn btn-danger btn-sm">Reject</button>
-                        </form>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    {% else %}
-        <p>No pending companies!</p>
-    
-    {% endif %}
-    
+    <div class="card shadow-sm p-3 mb-4">
+        <h4 class="mb-3">Pending Company approvals</h4>
+        {% if pending_companies %}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Website</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for company in pending_companies %}
+                    <tr>
+                        <td>{{ company.name }}</td>
+                        <td>{{ company.email }}</td>
+                        <td>{{ company.website }}</td>
+                        <td class="d-inline">
+                            <form action="{{ url_for('approve_company', company_id = company.id) }}" method="POST">
+                                <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                            </form>
 
-    
-
-    <h4 class="mb-3 mt-4">Pending Drive Approvals</h4>
-    {% if pending_drives %}
-    <div class="table-responsive">
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Drive ID</th>
-                    <th>Job Title</th>
-                    <th>Company</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for drive in pending_drives %}
-                <tr>
-                    <td>{{ drive.id }}</td>
-                    <td>{{drive.title }}</td>
-                    <td>{{drive.company.name }}</td>
-                    <td>
-                        <form action="{{ url_for('approve_drive', drive_id = drive.id)}}" method="POST">
-                            <button type="submit" class="btn btn-success btn-sm">Approve</button>
-                        </form>
-                        <form action="{{ url_for('reject_drive', drive_id = drive.id)}}" method="POST">
-                            <button type="submit" class="btn btn-danger btn-sm">Reject</button>
-                        </form>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    {% else %}
-        <p>No pending drives!</p>
-    {% endif %}
-
-    
-
-
-    <h4 class="mb-3 mt-4">All Students</h4>
-    <form action="{{ url_for('admin_dashboard') }}" method="GET">
-        <div class="input-group mb-3">
-            <input type="text" class="form-control" name="search_student" placeholder="Search student by name or ID">
-            <button class="btn btn-primary" type="submit">Search</button>
+                            <form action="{{ url_for('reject_company', company_id = company.id) }}" method="POST">
+                                <button type="submit" class="btn btn-danger btn-sm">Reject</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
-    </form>
-    {% if all_students %}
-    <div class="table-responsive">
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Department</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for student in all_students %}
-                <tr>
-                    <td>{{ student.id }}</td>
-                    <td>{{ student.name }}</td>
-                    <td>{{ student.email }}</td>
-                    <td>{{ student.department }}</td>
-                    <td>{{ "Active" if student.is_active else "Blacklisted" }}</td>
-                    <td>
-                        <form action="{{ url_for('blacklist_student', student_id = student.id) }}" method="POST">
-                            <button type="submit" class="btn btn-warning btn-sm">
-                                {{ "Unblacklist" if not student.is_active else "Blacklist" }}
-                            </button>
-                        </form>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        {% else %}
+            <p>No pending companies!</p>
+    
+        {% endif %}
     </div>
-    {% else %}
-        <p>No students registered!</p>
-    
-    {% endif %}
-
     
 
-    <h4 class="mb-3 mt-4">All Companies</h4>
-    <form action="{{ url_for('admin_dashboard') }}" method="GET">
-        <div class="input-group mb-3">
-            <input type="text" class="form-control" name="search_company" placeholder="Search company by name or ID">
-            <button class="btn btn-primary" type="submit">Search</button>
+    
+    <div class="card shadow-sm p-3 mb-4">
+        <h4 class="mb-3 mt-4">Pending Drive Approvals</h4>
+        {% if pending_drives %}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Drive ID</th>
+                        <th>Job Title</th>
+                        <th>Company</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for drive in pending_drives %}
+                    <tr>
+                        <td>{{ drive.id }}</td>
+                        <td>{{drive.title }}</td>
+                        <td>{{drive.company.name }}</td>
+                        <td>
+                            <form action="{{ url_for('approve_drive', drive_id = drive.id)}}" method="POST">
+                                <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                            </form>
+                            <form action="{{ url_for('reject_drive', drive_id = drive.id)}}" method="POST">
+                                <button type="submit" class="btn btn-danger btn-sm">Reject</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
-    </form>
-    {% if all_companies %}
-    <div class="table-responsive">
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Website</th>
-                    <th>Industry</th>
-                    <th>Approved</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for company in all_companies %}
-                <tr>
-                    <td>{{ company.id }}</td>
-                    <td>{{ company.name }}</td>
-                    <td>{{ company.email }}</td>
-                    <td>{{ company.website }}</td>
-                    <td>{{ company.industry }}</td>
-                    <td>{{ "Yes" if company.is_approved else "No" }}</td>
-                    <td>{{ "Active" if company.is_active else "Blacklisted" }}</td>
-                    <td>
-                        <form action="{{ url_for('blacklist_company', company_id = company.id) }}" method="POST">
-                            <button type="submit" class="btn btn-warning btn-sm">
-                                {{ "Unblacklist" if not company.is_active else "Blacklist" }}
-                            </button>
-                        </form>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        {% else %}
+            <p>No pending drives!</p>
+        {% endif %}
     </div>
-    {% else %}
-        <p>No companies registered!</p>
     
-    {% endif %}
-    <h4 class="mb-4">All Drives</h4>
-    {% if all_drives %}
-    <div class="table-responsive">
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Job Title</th>
-                    <th>Company</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for drive in all_drives %}
-                <tr>
-                    <td>{{ drive.id }}</td>
-                    <td>{{ drive.title }}</td>
-                    <td>{{ drive.company.name }}</td>
-                    <td>{{ drive.status | capitalize }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+
+    <div class="card shadow-sm p-3 mb-4">
+        <h4 class="mb-3 mt-4">All Students</h4>
+        <form action="{{ url_for('admin_dashboard') }}" method="GET">
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" name="search_student" placeholder="Search student by name or ID">
+                <button class="btn btn-primary" type="submit">Search</button>
+            </div>
+        </form>
+        {% if all_students %}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Department</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in all_students %}
+                    <tr>
+                        <td>{{ student.id }}</td>
+                        <td>{{ student.name }}</td>
+                        <td>{{ student.email }}</td>
+                        <td>{{ student.department }}</td>
+                        <td>
+                            <span class="badge {% if student.is_active %}bg-success{% else %}bg-danger{% endif %}">
+                                {{ "Active" if student.is_active else "Blacklisted" }}
+                            </span>
+                        </td>
+                        <td>
+                            <form action="{{ url_for('blacklist_student', student_id = student.id) }}" method="POST">
+                                <button type="submit" class="btn btn-warning btn-sm">
+                                    {{ "Unblacklist" if not student.is_active else "Blacklist" }}
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+            <p>No students registered!</p>
+    
+        {% endif %}
     </div>
-    {% else %}
-        <p>No ongoing drives!</p>
     
-    {% endif %}
-    <h4 class="mb-4">All Applications</h4>
-    {% if all_applications %}
-    <div class="table-responsive">
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Student Name</th>
-                    <th>Job Title</th>
-                    <th>Company</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for app in all_applications %}
-                <tr>
-                    <td>{{ app.student.name if app.student else 'N/A' }}</td>
-                    <td>{{ app.job.title if app.job else 'N/A' }}</td>
-                    <td>{{ app.job.company.name if app.job and app.job.company else 'N/A' }}</td>
-                    <td>{{ app.status | capitalize }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <div class="card shadow-sm p-3 mb-4">
+        <h4 class="mb-3 mt-4">All Companies</h4>
+        <form action="{{ url_for('admin_dashboard') }}" method="GET">
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" name="search_company" placeholder="Search company by name or ID">
+                <button class="btn btn-primary" type="submit">Search</button>
+            </div>
+        </form>
+        {% if all_companies %}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Website</th>
+                        <th>Industry</th>
+                        <th>Approved</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for company in all_companies %}
+                    <tr>
+                        <td>{{ company.id }}</td>
+                        <td>{{ company.name }}</td>
+                        <td>{{ company.email }}</td>
+                        <td>{{ company.website }}</td>
+                        <td>{{ company.industry }}</td>
+                        <td>{{ "Yes" if company.is_approved else "No" }}</td>
+                        <td>
+                            <span class="badge {% if company.is_active %}bg-success{% else %}bg-danger{% endif %}">
+                                {{ "Active" if company.is_active else "Blacklisted" }}
+                            </span>
+                        </td>
+                        <td>
+                            <form action="{{ url_for('blacklist_company', company_id = company.id) }}" method="POST">
+                                <button type="submit" class="btn btn-warning btn-sm">
+                                    {{ "Unblacklist" if not company.is_active else "Blacklist" }}
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+            <p>No companies registered!</p>
+    
+        {% endif %}
     </div>
-    {% else %}
-        <p>No applications</p>
+
+    <div class="card shadow-sm p-3 mb-4">
+        <h4 class="mb-4">All Drives</h4>
+        {% if all_drives %}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Job Title</th>
+                        <th>Company</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for drive in all_drives %}
+                    <tr>
+                        <td>{{ drive.id }}</td>
+                        <td>{{ drive.title }}</td>
+                        <td>{{ drive.company.name }}</td>
+                        <td>
+                            <span class="badge 
+                                {% if drive.is_active %}bg-success
+                                {% elif drive.status == 'approved' %}bg-success
+                                {% elif drive.status == 'pending' %}bg-warning text-dark
+                                {% elif drive.status == 'rejected' %}bg-danger
+                                {% else %}bg-danger{% endif %}">
+                                {{ drive.status | capitalize }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+            <p>No ongoing drives!</p>
     
-    {% endif %}
+        {% endif %}
+    </div>
+
+
+    <div class="card shadow-sm p-3 mb-4">
+        <h4 class="mb-4">All Applications</h4>
+        {% if all_applications %}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Student Name</th>
+                        <th>Job Title</th>
+                        <th>Company</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for app in all_applications %}
+                    <tr>
+                        <td>{{ app.student.name if app.student else 'N/A' }}</td>
+                        <td>{{ app.job.title if app.job else 'N/A' }}</td>
+                        <td>{{ app.job.company.name if app.job and app.job.company else 'N/A' }}</td>
+                        <td>
+                            <span class="badge 
+                                {% if app.is_active %}bg-success
+                                {% elif app.status == 'selected' %}bg-success
+                                {% elif app.status == 'shortlisted' %}bg-warning text-dark
+                                {% elif app.status == 'rejected' %}bg-danger
+                                {% else %}bg-danger{% endif %}">
+                                {{ app.status | capitalize }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+            <p>No applications</p>
+    
+        {% endif %}
+    </div>
 </div>
 
 {% endblock %}

@@ -5,14 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}PlaceMe{% endblock %}</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        html, body{
+            height: 100%;
+        }
+        body{
+            display: flex;
+            flex-direction: column;
+        }
+        .main-content{
+            flex: 1;
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
             <a class="navbar-brand" href="{{ url_for('home') }}">PlaceMe</a>
             <div class="ms-auto">
-                {% if request.endpoint not in ['home', 'login', 'student_register', 'recruiter_register'] %}
+                {% if request.endpoint in ['admin_dashboard', 'student_dashboard', 'company_dashbaord'] %}
                     <a class="btn btn-outline-light" href="{{ url_for('logout')}}">Logout</a>
+                {% elif request.endpoint in ['update_profile'] %}
+                    <a class="btn btn-outline-light" href="{{ url_for('student_dashboard') }}">Back</a>
+                {% elif request.endpoint in ['view_applications'] %}
+                    <a class="btn btn-outline-light" href="{{ url_for('company_dashboard') }}">Back</a>
                 {% else %}
                     <a class="btn btn-outline-light" href="{{ url_for('home') }}">Home</a>
                 {% endif %}
@@ -26,7 +43,13 @@
             {% endfor %}
         {% endif %}
     {% endwith %}
-    {% block content %}
-    {% endblock %}
+    <div class="main-content">
+        {% block content %}
+        {% endblock %}
+    </div>
+    <footer class="bg-dark text-white text-center p-3 mt-5">
+        <p class="mb-0">2026 PlaceMe | Built with Flask</p>
+    </footer>
+    
 </body>
 </html>

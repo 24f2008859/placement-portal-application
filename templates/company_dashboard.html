@@ -2,95 +2,130 @@
 {% block title %}Company Dashboard | PlaceMe{% endblock %}
 {% block content %}
 
-<div class="container mt-4">
-    <div class="row justify-content-center mb-4">
-        <div class="col-md-6">
-            <div class="card p-4">
-                <h4 class="text-center mb-3">Company Profile</h4>
-                <h5><strong>Name:</strong> {{ company.name }}</h5>
-                <h5><strong>Email:</strong> {{ company.email }}</h5>
-                <h5><strong>Website:</strong> {{ company.website }}</h5>
-                <h5><strong>Department:</strong> {{ company.department }}</h5>
-                <p><strong>Status:</strong> {{ "Approved" if company.is_approved else "Pending Approval" }}</p>
-            </div>
+<div class="row mb-4">
+
+    <!-- LEFT: Company Profile -->
+    <div class="col-md-4">
+        <div class="card p-4 shadow-sm h-100">
+            <h5 class="mb-3">Company Profile</h5>
+
+            <p><strong>Name:</strong> {{ company.name }}</p>
+            <p><strong>Email:</strong> {{ company.email }}</p>
+            <p><strong>Website:</strong> {{ company.website }}</p>
+            <p><strong>Industry:</strong> {{ company.industry }}</p>
+
+            <span class="badge 
+                {% if company.is_approved %}bg-success{% else %}bg-warning{% endif %}">
+                {{ "Approved" if company.is_approved else "Pending" }}
+            </span>
         </div>
     </div>
-    <div class="row justify-content-center mb-4">
-        <div class="col-md-6">
-            <div class="card p-4">
-                <h4 class="text-center mb-3">Create Placement Drive</h4>
-                <form action="{{ url_for('create_drive')}}" method="POST">
-                    <div class="mb-3">
-                        <label for="title">Job Title</label>
-                        <input type="text" class="form-control" id="title" name="title" placeholder="Enter job title" required>
+
+    <!-- RIGHT: Create Drive -->
+    <div class="col-md-8">
+        <div class="card p-4 shadow-sm">
+            <h5 class="mb-3">Create Placement Drive</h5>
+
+            <form action="{{ url_for('create_drive')}}" method="POST">
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label>Job Title</label>
+                        <input type="text" class="form-control" name="title" required>
                     </div>
-                    <div class="mb-3">
-                        <label for="description">Job Description</label>
-                        <textarea class="form-control" id="description" name="description" rows="4" placeholder="Enter job description" required></textarea>
+
+                    <div class="col-md-6 mb-3">
+                        <label>Salary</label>
+                        <input type="text" class="form-control" name="salary">
                     </div>
-                    <div class="mb-3">
-                        <label for="skills">Required skills</label>
-                        <input type="text" class="form-control" id="skills" name="skills" placeholder="e.g. Python, SQL, Flask">
+                </div>
+
+                <div class="mb-3">
+                    <label>Description</label>
+                    <textarea class="form-control" name="description" rows="3"></textarea>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label>Skills</label>
+                        <input type="text" class="form-control" name="skills">
                     </div>
-                    <div class="mb-3">
-                        <label for="eligibility">Eligibility Criteria</label>
-                        <input type="text" class="form-control" id="eligibility" name="eligibility" placeholder="e.g. CGPA, CSE/DS students only">
+
+                    <div class="col-md-6 mb-3">
+                        <label>Eligibility</label>
+                        <input type="text" class="form-control" name="eligibility">
                     </div>
-                    <div class="mb-3">
-                        <label for="experience">Experience Required</label>
-                        <input type="text" class="form-control" id="experience" name="experience" placeholder="e.g. 0-2 years">
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label>Experience</label>
+                        <input type="text" class="form-control" name="experience">
                     </div>
-                    <div class="mb-3">
-                        <label for="salary">Salary Range</label>
-                        <input type="text" class="form-control" id="salary" name="salary" placeholder="e.g. 5-8 LPA">
+
+                    <div class="col-md-6 mb-3">
+                        <label>Deadline</label>
+                        <input type="date" class="form-control" name="deadline" required>
                     </div>
-                    <div class="mb-3">
-                        <label for="deadline">Application Deadline</label>
-                        <input type="date" class="form-control" id="deadline" name="deadline" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100">
-                        Create Drive
-                    </button>
-                </form>
-            </div>
+                </div>
+
+                <button class="btn btn-primary w-100">Create Drive</button>
+            </form>
         </div>
     </div>
-    {% if drives %}
+
+</div>
+
+<div class="card shadow-sm p-3">
+    <h5 class="mb-3">Your Drives</h5>
+
     <div class="table-responsive">
-        <table class="table table-bordered">
-            <thead>
+        <table class="table table-hover align-middle">
+            <thead class="table-dark">
                 <tr>
-                    <th>Drive Id</th>
+                    <th>ID</th>
                     <th>Job Title</th>
                     <th>Status</th>
                     <th>Actions</th>
                 </tr>
             </thead>
+
             <tbody>
                 {% for drive in drives %}
                 <tr>
                     <td>{{ drive.id }}</td>
-                    <td>{{ drive.title }}</td>
-                    <td>{{ drive.status | capitalize }}</td>
+
                     <td>
-                        <a href="{{ url_for('view_applications', drive_id = drive.id) }}" class="btn btn-primary btn-sm">View Applications</a>
-                        <form action="{{ url_for('toggle_drive_status', drive_id = drive.id)}}" method="POST">
-                            <button type="submit" class="btn btn-warning btn-sm">
-                                {{ "Close Drive" if drive.status == 'approved' else "Reopen Drive"}}
+                        <strong>{{ drive.title }}</strong>
+                    </td>
+
+                    <td>
+                        <span class="badge 
+                            {% if drive.status == 'approved' %}bg-success
+                            {% else %}bg-secondary{% endif %}">
+                            {{ drive.status | capitalize }}
+                        </span>
+                    </td>
+
+                    <td>
+                        <a href="{{ url_for('view_applications', drive_id=drive.id) }}" 
+                           class="btn btn-outline-primary btn-sm">
+                           View
+                        </a>
+
+                        <form action="{{ url_for('toggle_drive_status', drive_id=drive.id)}}" 
+                              method="POST" class="d-inline">
+                            <button class="btn btn-outline-warning btn-sm">
+                                {{ "Close" if drive.status == 'approved' else "Reopen"}}
                             </button>
                         </form>
                     </td>
+
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
-    {% else %}
-        <p>No drives created yet!</p>
-    
-    {% endif %}
-    
 </div>
-
 
 {% endblock %}
