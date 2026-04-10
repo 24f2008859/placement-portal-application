@@ -251,6 +251,11 @@ def blacklist_company(company_id):
 def create_drive():
     if session.get('role') != 'company':
         return redirect(url_for('home'))
+    company_id = session['company_id']
+    company = Company.query.get(company_id)
+    if not company.is_active:
+        flash("You are blacklisted and can't create drives.", "danger")
+        return redirect(url_for('company_dashboard'))
     title = request.form.get("title")
     description = request.form.get("description")
     skills = request.form.get("skills")
@@ -258,7 +263,7 @@ def create_drive():
     salary = request.form.get("salary")
     deadline = request.form.get("deadline")
     eligibility = request.form.get("eligibility")
-    company_id = session['company_id']
+    
 
     errors = []
     if not title:
@@ -306,6 +311,10 @@ def apply(drive_id):
     if session.get('role') != 'student':
         return redirect(url_for('home'))
     student_id = session['student_id']
+    student = Student.query.get(student_id)
+    if not student.is_active:
+        flash("You are blacklisted and can't apply for jobs.", "danger")
+        return redirect(url_for('student_dashboard'))
     existing = Application.query.filter_by(student_id = student_id, job_id = drive_id).first()
     if existing:
         flash("already applied!", "warning")

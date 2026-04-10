@@ -2,9 +2,15 @@
 {% block title %}Company Dashboard | PlaceMe{% endblock %}
 {% block content %}
 
+{% if not company.is_active %}
+    <div class="alert alert-danger text-center">
+        Your account has been backlisted by admin. You cannot create drives.
+    </div>
+{% endif %}
+
 <div class="row mb-4">
 
-    <!-- LEFT: Company Profile -->
+    <!-- Company Profile -->
     <div class="col-md-4">
         <div class="card p-4 shadow-sm h-100">
             <h5 class="mb-3">Company Profile</h5>
@@ -21,7 +27,7 @@
         </div>
     </div>
 
-    <!-- RIGHT: Create Drive -->
+    <!-- Create Drive -->
     <div class="col-md-8">
         <div class="card p-4 shadow-sm">
             <h5 class="mb-3">Create Placement Drive</h5>
@@ -68,8 +74,11 @@
                         <input type="date" class="form-control" name="deadline" required>
                     </div>
                 </div>
-
-                <button class="btn btn-primary w-100">Create Drive</button>
+                {% if not company.is_active %}
+                    <button class="btn btn-primary w-100" disabled>Blocked</button>
+                {% else %}
+                    <button type="submit" class="btn btn-primary w-100">Create Drive</button>
+                {% endif %}
             </form>
         </div>
     </div>

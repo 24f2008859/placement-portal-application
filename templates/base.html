@@ -24,7 +24,7 @@
         <div class="container">
             <a class="navbar-brand" href="{{ url_for('home') }}">PlaceMe</a>
             <div class="ms-auto">
-                {% if request.endpoint in ['admin_dashboard', 'student_dashboard', 'company_dashbaord'] %}
+                {% if request.endpoint in ['admin_dashboard', 'student_dashboard', 'company_dashboard'] %}
                     <a class="btn btn-outline-light" href="{{ url_for('logout')}}">Logout</a>
                 {% elif request.endpoint in ['update_profile'] %}
                     <a class="btn btn-outline-light" href="{{ url_for('student_dashboard') }}">Back</a>

@@ -1,8 +1,9 @@
 # PlaceMe - Placement Portal Application
 
 ## About
-PlaceMe is a web-based application that allows Admin (Institute), Company, and students to interact with the system based on their roles. This portal built using Flask and SQLite.
+PlaceMe is a web-based application that allows Admin (Institute), Company, and students to interact with the system based on their roles.The system provides a centralized platform for managing placement activities efficiently.
 
+### User Roles
 - **Admin** manages the entire portal including approving companies and drives.
 - **Company** registers, posts placement drives and manage applications.
 - **Student** registers, applies for placement drives and track application status
@@ -11,7 +12,7 @@ PlaceMe is a web-based application that allows Admin (Institute), Company, and s
 - **Backend:** Python, Flask, Flask-SQLAlchemy
 - **Frontend:** HTML5, CSS3, Bootstrap 5, Jinja2
 - **Database:** SQLite
-- **Other:** Flask Sessions, Manual REST API (jsonify)
+- **Other:** Flask Sessions, REST API (jsonify)
 
 ## Setup Instructions
 

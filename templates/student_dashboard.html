@@ -3,6 +3,11 @@
 
 {% block content %}
 
+{% if not student.is_active %}
+    <div class="alert alert-danger text-center">
+        Your account has been backlisted by admin. You cannot apply for jobs.
+    </div>
+{% endif %}
 <div class="row mb-4">
 
 
@@ -71,7 +76,9 @@
                                 </span>
                             </td>
                             <td>
-                                {% if drive.id in applied_job_ids %}
+                                {% if not student.is_active %}
+                                    <span class="badge bg-danger">Blocked</span>
+                                {% elif drive.id in applied_job_ids %}
                                     <span class="badge bg-success">Applied</span>
                                 {% else %}
                                     <form action="{{ url_for('apply', drive_id=drive.id) }}" method="POST">
