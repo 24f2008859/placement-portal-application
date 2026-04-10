@@ -14,9 +14,9 @@ class Company(db.Model):
     email = db.Column(db.String(100), nullable = False, unique = True)
     password = db.Column(db.String(200), nullable = False)
     website = db.Column(db.String(200), nullable = True)
-    is_approved = db.Column(db.Boolean, default = False)
-    is_active = db.Column(db.Boolean, default=True)
     industry = db.Column(db.String(100), nullable = True)
+    is_active = db.Column(db.Boolean, default=True)
+    is_approved = db.Column(db.Boolean, default = False)
 
 class Student(db.Model):
     id = db.Column(db.Integer, primary_key = True)

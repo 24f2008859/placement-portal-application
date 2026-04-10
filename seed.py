@@ -21,7 +21,7 @@ with app.app_context():
                 password="test123", website="infosys.com",
                 industry="IT Services")
 
-    # Add all at once
+    
     db.session.add_all([s1, s2, s3, c1, c2, c3])
     db.session.commit()
     print("Seed data added!")
