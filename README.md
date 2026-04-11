@@ -31,9 +31,6 @@ pip install flask flask-sqlalchemy
 3. Run the application
 python3 app.py
 
-4. Add test data(optional)
-python3 seed.py
-
-5. Open browser and visit
+4. Open browser and visit
 http://127.0.0.1:5000
 
